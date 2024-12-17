@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuitansi Dinamis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-section, .receipt-section {
+            width: 48%;
+        }
+        .form-section h3, .receipt-section h3 {
+            text-align: center;
+        }
+        .form-section input, .form-section button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .receipt {
+            border: 1px solid #000;
+            padding: 15px;
+            margin-top: 10px;
+            max-width: 100%;
+        }
+        .receipt .logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .receipt .logo img {
+            max-width: 80px;
+            height: auto;
+        }
+        .receipt h2 {
+            text-align: center;
+            margin: 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+            font-size: 18px;
+        }
+        .items p {
+            margin: 5px 0;
+            padding: 5px 0;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        .items span, .total span {
+            float: right;
+        }
+        .total {
+            border-top: 1px solid #000;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        .total p {
+            margin: 5px 0;
+            padding: 5px 0;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        .thankyou {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #000;
+            font-size: 14px;
+        }
+        .receipt-header {
+            border-bottom: 1px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .receipt-header p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .form-section, button, .receipt-section h3 {
+                display: none;
+            }
+            .receipt-section {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .receipt {
+                width: 60mm; /* Standar lebar kertas struk */
+                margin: 0 auto;
+                border: none;
+                padding: 10px;
+            }
+            .receipt h2 {
+                font-size: 16px;
+            }
+            .items p, .total p, .thankyou p, .receipt-header p {
+                font-size: 12px;
+            }
+            .receipt .logo img {
+                max-width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form Input -->
+        <div class="form-section">
+            <h3>Input Data Kuitansi</h3>
+            <input type="text" id="buyerName" placeholder="Nama Pembeli" />
+            <input type="text" id="item1" placeholder="Barang 1" />
+            <input type="number" id="qty1" placeholder="Jumlah Barang 1" />
+            <input type="number" id="price1" placeholder="Harga Barang 1" />
+            
+            <input type="text" id="item2" placeholder="Barang 2" />
+            <input type="number" id="qty2" placeholder="Jumlah Barang 2" />
+            <input type="number" id="price2" placeholder="Harga Barang 2" />
+            
+            <input type="text" id="item3" placeholder="Barang 3" />
+            <input type="number" id="qty3" placeholder="Jumlah Barang 3" />
+            <input type="number" id="price3" placeholder="Harga Barang 3" />
+            
+            <input type="text" id="item4" placeholder="Barang 4" />
+            <input type="number" id="qty4" placeholder="Jumlah Barang 4" />
+            <input type="number" id="price4" placeholder="Harga Barang 4" />
+            
+            <input type="text" id="item5" placeholder="Barang 5" />
+            <input type="number" id="qty5" placeholder="Jumlah Barang 5" />
+            <input type="number" id="price5" placeholder="Harga Barang 5" />
+
+            <input type="text" id="item6" placeholder="Barang 6" />
+            <input type="number" id="qty6" placeholder="Jumlah Barang 6" />
+            <input type="number" id="price6" placeholder="Harga Barang 6" />
+
+            <input type="text" id="item7" placeholder="Barang 7" />
+            <input type="number" id="qty7" placeholder="Jumlah Barang 7" />
+            <input type="number" id="price7" placeholder="Harga Barang 7" />
+
+            <input type="text" id="item8" placeholder="Barang 8" />
+            <input type="number" id="qty8" placeholder="Jumlah Barang 8" />
+            <input type="number" id="price8" placeholder="Harga Barang 8" />
+
+            <button onclick="generateReceipt()">Generate Kuitansi</button>
+            <button onclick="window.print()">Cetak Kuitansi</button>
+        </div>
+
+        <!-- Tampilan Kuitansi -->
+        <div class="receipt-section">
+            <h3>Kuitansi</h3>
+            <div class="receipt" id="receipt">
+                <div class="logo">
+                    <img src="assets/logo.jpg" alt="Logo">
+                </div>
+                <div class="receipt-header">
+                    <h2>Dehi_Songket</h2>
+                    <p><strong>Date/Time:</strong> <span id="dateTime"></span></p>
+                </div>
+                <div class="items" id="itemList"></div>
+                <div class="total">
+                    <p>TOTAL QTY: <span id="totalQty">0</span></p>
+                    <p>Subtotal: <span id="subtotal">Rp0</span></p>
+                </div>
+                <div class="thankyou">
+                    <p>Thank you</p>
+                    <p><strong id="buyer">Nama Pembeli</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("dateTime").innerText = new Date().toLocaleString("id-ID");
+
+        function generateReceipt() {
+            const buyerName = document.getElementById("buyerName").value || "Nama Pembeli";
+            let totalQty = 0;
+            let subtotal = 0;
+            let itemList = "";
+
+            // Process each item
+            for (let i = 1; i <= 5; i++) {
+                const item = document.getElementById(`item${i}`).value;
+                const qty = parseInt(document.getElementById(`qty${i}`).value) || 0;
+                const price = parseInt(document.getElementById(`price${i}`).value) || 0;
+                
+                if (item && qty > 0 && price > 0) {
+                    const itemTotal = qty * price;
+                    itemList += `<p>${qty}* ${item} <span>Rp${itemTotal.toLocaleString("id-ID")}</span></p>`;
+                    totalQty += qty;
+                    subtotal += itemTotal;
+                }
+            }
+
+            document.getElementById("itemList").innerHTML = itemList;
+            document.getElementById("totalQty").innerText = totalQty;
+            document.getElementById("subtotal").innerText = "Rp" + subtotal.toLocaleString("id-ID");
+            document.getElementById("buyer").innerText = buyerName;
+        }
+    </script>
+</body>
+</html>
